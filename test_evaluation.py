@@ -45,7 +45,7 @@ class TestEvaluation(unittest.TestCase):
         predicted_graph.add_undirected_edge(part_d1, part_a1)
         predicted_graph.add_undirected_edge(part_a1, part_d2)
 
-        expected_edge_accuracy = pow(len(target_graph.get_nodes()), 2)   # all edges should be predicted correctly
+        expected_edge_accuracy = pow(len(target_graph.get_nodes()), 2)  # all edges should be predicted correctly
         computed_edge_accuracy = edge_accuracy(predicted_graph, target_graph)
 
         self.assertEqual(expected_edge_accuracy, computed_edge_accuracy, 'Wrong value for edge accuracy.')
@@ -85,7 +85,7 @@ class TestEvaluation(unittest.TestCase):
         predicted_graph.add_undirected_edge(part_c, part_d)
         predicted_graph.add_undirected_edge(part_d, part_e)
 
-        expected_edge_accuracy = pow(len(target_graph.get_nodes()), 2)   # all edges should be predicted correctly
+        expected_edge_accuracy = pow(len(target_graph.get_nodes()), 2)  # all edges should be predicted correctly
         computed_edge_accuracy = edge_accuracy(predicted_graph, target_graph)
 
         self.assertEqual(expected_edge_accuracy, computed_edge_accuracy, 'Wrong value for edge accuracy.')

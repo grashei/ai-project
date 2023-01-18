@@ -4,7 +4,6 @@ import networkx as nx
 import numpy as np
 from typing import Dict, List, Set, Tuple, Union
 
-
 from node import Node
 from part import Part
 
@@ -21,7 +20,7 @@ class Graph:
         self.__edges: Dict[Node, List[Node]] = {}
         self.__node_counter: int = 0  # internal node id counter
         self.__is_connected: bool = None  # determines if the graph is connected
-        self.__contains_cycle: bool = None   # determines if the graph contains non-trivial cycles
+        self.__contains_cycle: bool = None  # determines if the graph contains non-trivial cycles
         self.__is_bidirectional: bool = None  # determines if all edges are bidirectional
 
     def __eq__(self, other) -> bool:
@@ -253,4 +252,3 @@ class Graph:
                     adj_matrix[idx, idx2] = adj_matrix[idx2, idx] = 1
 
         return adj_matrix
-

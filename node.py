@@ -6,6 +6,7 @@ class Node:
     A class to represent nodes of a graph.
     A part is described by its ID (id) and its containing part (part).
     """
+
     def __init__(self, node_id: int, part: Part):
         self.__id: int = node_id
         self.__part: Part = part

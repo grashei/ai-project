@@ -43,7 +43,7 @@ class TestGraph(unittest.TestCase):
         graph = Graph()  # 1 = 3 - 2
         graph.add_undirected_edge(part1, part3)
         graph.add_undirected_edge(part2, part3)
-        graph.add_undirected_edge(part3, part1)   # duplicate *reversed* undirected edge
+        graph.add_undirected_edge(part3, part1)  # duplicate *reversed* undirected edge
 
         graph_without_duplicated_edge = Graph()  # 1 - 3 - 2
         graph_without_duplicated_edge.add_undirected_edge(part1, part3)
@@ -134,7 +134,7 @@ class TestGraph(unittest.TestCase):
         g2.add_undirected_edge(part6, part8)
         g2.add_undirected_edge(part5, part6)
         g2.add_undirected_edge(part6, part7)
-        g2.add_undirected_edge(part7, part8)   # additional edge in graph2
+        g2.add_undirected_edge(part7, part8)  # additional edge in graph2
 
         # Assert equality but not identity
         self.assertNotEqual(g1, g2, 'Two different graph instances with different edges should not be equal.')

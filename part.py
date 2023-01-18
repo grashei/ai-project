@@ -39,7 +39,7 @@ class Part:
         if not isinstance(other, Part):
             raise TypeError(f'Can not define order for different types ({type(self)} and {type(other)})')
         return (self.get_part_id(), self.get_family_id()) < \
-               (other.get_part_id(), other.get_family_id())
+            (other.get_part_id(), other.get_family_id())
 
     def get_part_id(self) -> int:
         return self.__part_id
