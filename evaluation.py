@@ -77,7 +77,10 @@ def edge_accuracy(predicted_graph: Graph, target_graph: Graph) -> int:
     target_parts_order = perms[0]
     target_adj_matrix = target_graph.get_adjacency_matrix(target_parts_order)
 
-    for perm in perms:
+    for i, perm in enumerate(perms):
+        # TODO: Remove the 'timeout' break (added to calculate accuracy faster, but can decrease accuracy score).
+        if i > 10_000:
+            break
         predicted_adj_matrix = predicted_graph.get_adjacency_matrix(perm)
         score = np.sum(predicted_adj_matrix == target_adj_matrix)
         best_score = max(best_score, score)
