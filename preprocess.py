@@ -24,7 +24,7 @@ def create_features_from_graph(graph: Graph, fam_mapping: Dict) -> Tuple[List[Te
     # Create a tensor for existing nodes and count their occurrences
     existing_nodes_tensor = torch.zeros(len(fam_mapping), dtype=torch.uint8)
     for node in existing_nodes:
-        existing_nodes_tensor[node] += 1
+        existing_nodes_tensor[fam_mapping[node]] += 1
 
     existing_edge_list = []
 
