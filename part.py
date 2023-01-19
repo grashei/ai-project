@@ -23,6 +23,10 @@ class Part:
             raise TypeError(f'Can not compare different types ({type(self)} and {type(other)})')
         return self.get_part_id() == other.get_part_id() and self.get_family_id() == other.get_family_id()
 
+    # Breaks __generate_part_list_permutations method input
+    # def __eq__(self, other):
+    #     return self.equivalent(other)
+
     def __repr__(self) -> str:
         """
         Returns a string representation of the current Part object.
