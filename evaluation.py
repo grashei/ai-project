@@ -58,6 +58,43 @@ def evaluate(model: MyPredictionModel, data_set: List[Tuple[Set[Part], Graph]]) 
     return sum_correct_edges / edges_counter * 100
 
 
+def edge_accuracy_ratio(predicted_graph: Graph, target_graph: Graph) -> float:
+    """
+    :return: the edge accuracy as a value between 0.0 and 1.0 (both inclusive).
+    """
+    node_count = len(target_graph.get_nodes())
+    return edge_accuracy(predicted_graph, target_graph) / node_count ** 2
+
+
+def normalized_edge_accuracy_percentage(predicted_graph: Graph, target_graph: Graph) -> float:
+    """
+    :return: a value in range [0.0,1.0]. 0.0 means the edge accuracy couldn't be worse (assuming that both graphs are
+    spanning trees), 1.0 means the edge accuracy couldn't be better.
+    """
+    node_count = len(target_graph.get_nodes())
+    edge_count = node_count - 1
+    best_possible_percentage = 1.0
+    # There are #((node_count**2) - edge_count) node combinations that are not connected in the graph. If we mispredict
+    # all edges, #edge_count of all possible node combinations don't have an edge, even though they should have one.
+    # However, we still get most node combinations that are not connected right; only #edge_count combinations have an
+    # edge even though they shouldn't have one. So, 2 * #edge_count node combinations have the wrong edge prediction in
+    # total. All other #((node_count ** 2) - (2 * edge_count)) node combinations were predicated correctly. The worst
+    # possible percentage is therefore ((node_count ** 2) - (2 * edge_count)) / (node_count ** 2).
+    worst_possible_percentage = 1 - ((2 * edge_count) / (node_count ** 2))
+    actual_percentage = edge_accuracy_ratio(predicted_graph, target_graph)
+    return inv_lerp(worst_possible_percentage, best_possible_percentage, actual_percentage)
+
+
+def inv_lerp(a: float, b: float, v: float) -> float:
+    """Inverse Linar Interpolation, get the fraction between a and b on which v resides.
+    Examples
+    --------
+        0.5 == inv_lerp(0, 100, 50)
+        0.8 == inv_lerp(1, 5, 4.2)
+    """
+    return (v - a) / (b - a)
+
+
 def edge_accuracy(predicted_graph: Graph, target_graph: Graph) -> int:
     """
     Returns the number of correct predicted edges.
