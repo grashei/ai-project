@@ -265,3 +265,13 @@ class TestGraph(unittest.TestCase):
 
         computed_adj_matrix = graph.get_adjacency_matrix(part_order)
         self.assertTrue(np.all(expected_adj_matrix == computed_adj_matrix), 'Adjacency matrices should be equal.')
+
+    def test_edge_count(self):
+        graph = Graph()
+        part1 = Part(1, 3)
+        part2 = Part(2, 3)
+        part3 = Part(3, 3)
+        graph.add_undirected_edge(part1, part2)
+        graph.add_undirected_edge(part2, part3)
+
+        self.assertEqual(graph.get_edge_count(), 4, 'Graph should contain four edges')

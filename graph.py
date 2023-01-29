@@ -252,3 +252,10 @@ class Graph:
                     adj_matrix[idx, idx2] = adj_matrix[idx2, idx] = 1
 
         return adj_matrix
+
+    def get_node_count(self) -> int:
+        return len(self.__nodes)
+
+    def get_edge_count(self) -> int:
+        return sum(len(edges) for edges in self.__edges.values())
+
