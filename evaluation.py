@@ -1,15 +1,16 @@
-from abc import ABC, abstractmethod
-from itertools import permutations
-import numpy as np
 import pickle
+from abc import ABC, abstractmethod
+from collections import defaultdict
+from itertools import permutations
+from math import factorial
 from typing import Dict, List, Set, Tuple
 
-from graph import Graph
-from node import Node
-from part import Part
+import numpy as np
+from tqdm import tqdm
 
+from graph import Graph
+from part import Part
 from stats import print_data_stats
-from preprocess import create_family_id_mapping, create_features_from_graph
 
 
 class MyPredictionModel(ABC):
@@ -24,8 +25,6 @@ class MyPredictionModel(ABC):
         :param parts: set of parts to form up a construction (i.e. graph)
         :return: graph
         """
-        # TODO: implement this method
-        ...
 
 
 def load_model(file_path: str) -> MyPredictionModel:
@@ -34,7 +33,22 @@ def load_model(file_path: str) -> MyPredictionModel:
         :param file_path: path to file
         :return: the loaded prediction model
     """
-    ...
+    with open(file_path, 'rb') as model_file:
+        return pickle.load(model_file)
+
+
+def evaluate_graphs(model: MyPredictionModel, graphs: List[Graph]) -> float:
+    data_set = [(graph.get_parts(), graph) for graph in graphs]
+    return normalized_evaluate(model=model, data_set=data_set)
+
+
+def normalized_evaluate(model: MyPredictionModel, data_set: List[Tuple[Set[Part], Graph]]) -> float:
+    accuracies = 0.0
+    with tqdm(data_set) as data_set_with_progress:
+        for input_parts, target_graph in data_set_with_progress:
+            predicted_graph = model.predict_graph(input_parts)
+            accuracies += normalized_relative_edge_accuracy(predicted_graph, target_graph)
+    return accuracies / len(data_set)
 
 
 def evaluate(model: MyPredictionModel, data_set: List[Tuple[Set[Part], Graph]]) -> float:
@@ -58,7 +72,7 @@ def evaluate(model: MyPredictionModel, data_set: List[Tuple[Set[Part], Graph]]) 
     return sum_correct_edges / edges_counter * 100
 
 
-def normalized_relative_edge_accuracy(predicted_graph: Graph, target_graph: Graph) -> float:
+def normalized_relative_edge_accuracy(predicted_graph: Graph, target_graph: Graph, max_perms=10_000) -> float:
     """
     :return: a value in range [0.0,1.0]. 0.0 means the edge accuracy couldn't be worse (assuming that both graphs are
     spanning trees), 1.0 means the edge accuracy couldn't be better.
@@ -73,6 +87,11 @@ def normalized_relative_edge_accuracy(predicted_graph: Graph, target_graph: Grap
     # possible percentage is therefore ((node_count ** 2) - (2 * edge_count)) / (node_count ** 2).
     worst_possible_rel_accuracy = 1 - ((2 * edge_count) / (node_count ** 2))
     best_possible_rel_accuracy = 1.0
+
+    if calculate_num_permutations(predicted_graph) > max_perms:
+        # Calculating the accuracy for this graph would take too long, so we skip calculating it and return 0.
+        return 0
+
     actual_rel_accuracy = relative_edge_accuracy(predicted_graph, target_graph)
     return inv_lerp(worst_possible_rel_accuracy, best_possible_rel_accuracy, actual_rel_accuracy)
 
@@ -115,14 +134,22 @@ def edge_accuracy(predicted_graph: Graph, target_graph: Graph) -> int:
     target_adj_matrix = target_graph.get_adjacency_matrix(target_parts_order)
 
     for i, perm in enumerate(perms):
-        # TODO: Remove the 'timeout' break (added to calculate accuracy faster, but can decrease accuracy score).
-        if i > 10_000:
-            break
         predicted_adj_matrix = predicted_graph.get_adjacency_matrix(perm)
         score = np.sum(predicted_adj_matrix == target_adj_matrix)
         best_score = max(best_score, score)
 
     return best_score
+
+
+def calculate_num_permutations(g: Graph) -> int:
+    part_occurrence_map = defaultdict(int)
+    for part in g.get_parts():
+        part_occurrence_map[part.get_part_id()] += 1
+
+    result = 1
+    for occurrence in part_occurrence_map.values():
+        result *= factorial(occurrence)
+    return result
 
 
 def __generate_part_list_permutations(parts: Set[Part]) -> List[Tuple[Part]]:
@@ -164,17 +191,8 @@ if __name__ == '__main__':
     with open('data/graphs.dat', 'rb') as file:
         train_graphs: List[Graph] = pickle.load(file)
 
-    # Load the final model
-
     print_data_stats(train_graphs)
-
-    mapping = create_family_id_mapping(train_graphs)
-
-    features = create_features_from_graph(train_graphs[0], mapping)
-
-    exit()
-
-    model_file_path = ''  # ToDo
+    model_file_path = 'data/karl.dat'
     prediction_model: MyPredictionModel = load_model(model_file_path)
 
     # For illustration, compute eval score on train data

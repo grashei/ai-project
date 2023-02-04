@@ -2,7 +2,7 @@ from graph import Graph
 from typing import Dict, List
 
 
-class FamilyIdMapper:
+class FamilyIdMapping:
     def __init__(self, graphs: List[Graph]):
         self.__family_ids = sorted(list({int(part.get_family_id()) for graph in graphs for part in graph.get_parts()}))
         self.__mapping_len = len(self.__family_ids)
@@ -32,3 +32,5 @@ class FamilyIdMapper:
     def get_len(self) -> int:
         return self.__mapping_len
 
+    def __len__(self):
+        return self.get_len()
