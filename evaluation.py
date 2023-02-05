@@ -37,14 +37,15 @@ def load_model(file_path: str) -> MyPredictionModel:
         return pickle.load(model_file)
 
 
-def evaluate_graphs(model: MyPredictionModel, graphs: List[Graph]) -> float:
+def evaluate_graphs(model: MyPredictionModel, graphs: List[Graph], show_progress: bool = True) -> float:
     data_set = [(graph.get_parts(), graph) for graph in graphs]
-    return normalized_evaluate(model=model, data_set=data_set)
+    return normalized_evaluate(model=model, data_set=data_set, show_progress=show_progress)
 
 
-def normalized_evaluate(model: MyPredictionModel, data_set: List[Tuple[Set[Part], Graph]]) -> float:
+def normalized_evaluate(model: MyPredictionModel, data_set: List[Tuple[Set[Part], Graph]],
+                        show_progress: bool = True) -> float:
     accuracies = 0.0
-    with tqdm(data_set) as data_set_with_progress:
+    with tqdm(data_set, disable=not show_progress) as data_set_with_progress:
         for input_parts, target_graph in data_set_with_progress:
             predicted_graph = model.predict_graph(input_parts)
             accuracies += normalized_relative_edge_accuracy(predicted_graph, target_graph)
