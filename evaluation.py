@@ -42,8 +42,11 @@ def evaluate_graphs(model: MyPredictionModel, graphs: List[Graph], show_progress
     return normalized_evaluate(model=model, data_set=data_set, show_progress=show_progress)
 
 
-def normalized_evaluate(model: MyPredictionModel, data_set: List[Tuple[Set[Part], Graph]],
-                        show_progress: bool = True) -> float:
+def normalized_evaluate(
+        model: MyPredictionModel,
+        data_set: List[Tuple[Set[Part], Graph]],
+        show_progress: bool = True,
+) -> float:
     accuracies = 0.0
     with tqdm(data_set, disable=not show_progress) as data_set_with_progress:
         for input_parts, target_graph in data_set_with_progress:
