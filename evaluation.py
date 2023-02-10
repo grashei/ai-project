@@ -39,7 +39,7 @@ def load_model(file_path: str) -> MyPredictionModel:
 
 def evaluate_graphs(model: MyPredictionModel, graphs: List[Graph], show_progress: bool = True) -> float:
     data_set = [(graph.get_parts(), graph) for graph in graphs]
-    return normalized_evaluate(model=model, data_set=data_set, show_progress=show_progress)
+    return evaluate(model=model, data_set=data_set)
 
 
 def normalized_evaluate(model: MyPredictionModel, data_set: List[Tuple[Set[Part], Graph]],
