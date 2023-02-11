@@ -42,9 +42,9 @@ def normalized_evaluate_graphs(model: MyPredictionModel, graphs: List[Graph], sh
     return normalized_evaluate(model=model, data_set=data_set, show_progress=show_progress)
 
 
-def evaluate_graphs(model: MyPredictionModel, graphs: List[Graph], max_perms=10_000) -> float:
+def evaluate_graphs(model: MyPredictionModel, graphs: List[Graph], max_perms=10_000, show_progress=True) -> float:
     data_set = [(graph.get_parts(), graph) for graph in graphs]
-    return evaluate(model=model, data_set=data_set, max_perms=max_perms)
+    return evaluate(model=model, data_set=data_set, max_perms=max_perms, show_progress=show_progress)
 
 
 def normalized_evaluate(
