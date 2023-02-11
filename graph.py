@@ -259,3 +259,12 @@ class Graph:
     def get_edge_count(self) -> int:
         return sum(len(edges) for edges in self.__edges.values())
 
+    def is_reachable(self, target: Part, start: Part) -> bool:
+        if start not in self.get_parts() or target not in self.get_parts():
+            return False
+        start_node = self.__get_node_for_part(start)
+        target_node = self.__get_node_for_part(target)
+        seen_nodes: List[Node] = self.__breadth_search(start_node)
+        return target_node in set(seen_nodes)
+
+

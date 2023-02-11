@@ -42,7 +42,7 @@ def normalized_evaluate_graphs(model: MyPredictionModel, graphs: List[Graph], sh
     return normalized_evaluate(model=model, data_set=data_set, show_progress=show_progress)
 
 
-def evaluate_graphs(model: MyPredictionModel, graphs: List[Graph], max_perms=None) -> float:
+def evaluate_graphs(model: MyPredictionModel, graphs: List[Graph], max_perms=10_000) -> float:
     data_set = [(graph.get_parts(), graph) for graph in graphs]
     return evaluate(model=model, data_set=data_set, max_perms=max_perms)
 
@@ -63,7 +63,7 @@ def normalized_evaluate(
 def evaluate(
         model: MyPredictionModel,
         data_set: List[Tuple[Set[Part], Graph]],
-        max_perms=None,
+        max_perms=10_000,
         show_progress: bool = True,
 ) -> float:
     """
@@ -134,10 +134,6 @@ def edge_accuracy(predicted_graph: Graph, target_graph: Graph, max_perms=None) -
     assert len(predicted_graph.get_nodes()) == len(target_graph.get_nodes()), 'Mismatch in number of nodes.'
     assert predicted_graph.get_parts() == target_graph.get_parts(), 'Mismatch in expected and given parts.'
 
-    if max_perms is not None and calculate_num_permutations(predicted_graph) > max_perms:
-        # Calculating the accuracy for this graph would take too long, so we skip calculating it and return 0.
-        return 0
-
     best_score = 0
 
     # Determine all permutations for the predicted graph and choose the best one in evaluation
@@ -147,7 +143,8 @@ def edge_accuracy(predicted_graph: Graph, target_graph: Graph, max_perms=None) -
     target_parts_order = perms[0]
     target_adj_matrix = target_graph.get_adjacency_matrix(target_parts_order)
 
-    for i, perm in enumerate(perms):
+    for i, perm in enumerate(perms[:max_perms]):
+        # Calculating the accuracy for this graph would take too long, break after max_perms permutations.
         predicted_adj_matrix = predicted_graph.get_adjacency_matrix(perm)
         score = np.sum(predicted_adj_matrix == target_adj_matrix)
         best_score = max(best_score, score)
