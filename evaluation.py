@@ -93,18 +93,20 @@ def normalized_relative_edge_accuracy(predicted_graph: Graph, target_graph: Grap
     """
     node_count = len(target_graph.get_nodes())
     edge_count = node_count - 1
-    # There are #((node_count**2) - edge_count) node combinations that are not connected in the graph. If we mispredict
-    # all edges, #edge_count of all possible node combinations don't have an edge, even though they should have one.
-    # However, we still get most node combinations that are not connected right; only #edge_count combinations have an
-    # edge even though they shouldn't have one. So, 2 * #edge_count node combinations have the wrong edge prediction in
-    # total. All other #((node_count ** 2) - (2 * edge_count)) node combinations were predicated correctly. The worst
-    # possible percentage is therefore ((node_count ** 2) - (2 * edge_count)) / (node_count ** 2).
-    worst_possible_rel_accuracy = 1 - ((2 * edge_count) / (node_count ** 2))
-    best_possible_rel_accuracy = 1.0
+    adjacency_entry_count = node_count ** 2
 
-    actual_rel_accuracy = relative_edge_accuracy(predicted_graph, target_graph, max_perms)
-    return inv_lerp(worst_possible_rel_accuracy, best_possible_rel_accuracy, actual_rel_accuracy)
-
+    # There are ((node_count**2) - (2 * edge_count)) node combinations that are not connected in the graph. If we
+    # mispredict all edges, 2 * edge_count of all possible node combinations don't have an edge (2* because the
+    # adjacency matrix represents a directed graph), even though they should have one. However, we still get most node
+    # combinations that are not connected right; only 2 * edge_count combinations have an edge even though they
+    # shouldn't have one. So, 2 * 2 * edge_count node combinations have the wrong edge prediction in total. All other
+    # ((node_count ** 2) - (2 * 2 * edge_count)) node combinations were predicated correctly. The worst possible
+    # percentage is therefore ((node_count ** 2) - (2 * edge_count)) / (node_count ** 2).
+    worst_possible_accuracy = adjacency_entry_count - (2 * 2 * edge_count)
+    best_possible_accuracy = adjacency_entry_count
+    actual_accuracy = edge_accuracy(predicted_graph, target_graph, max_perms)
+    # print(worst_possible_accuracy, best_possible_accuracy, actual_accuracy)
+    return inv_lerp(worst_possible_accuracy, best_possible_accuracy, actual_accuracy)
 
 def relative_edge_accuracy(predicted_graph: Graph, target_graph: Graph, max_perms=10_000) -> float:
     """
@@ -129,6 +131,7 @@ def edge_accuracy(predicted_graph: Graph, target_graph: Graph, max_perms=None) -
     Returns the number of correct predicted edges.
     :param predicted_graph:
     :param target_graph:
+    :param max_perms: Calculating the accuracy for some graphs may take too long, break after max_perms permutations.
     :return:
     """
     assert len(predicted_graph.get_nodes()) == len(target_graph.get_nodes()), 'Mismatch in number of nodes.'
@@ -143,8 +146,8 @@ def edge_accuracy(predicted_graph: Graph, target_graph: Graph, max_perms=None) -
     target_parts_order = perms[0]
     target_adj_matrix = target_graph.get_adjacency_matrix(target_parts_order)
 
+    # Calculating the accuracy for some graphs may take too long, break after max_perms permutations.
     for i, perm in enumerate(perms[:max_perms]):
-        # Calculating the accuracy for this graph would take too long, break after max_perms permutations.
         predicted_adj_matrix = predicted_graph.get_adjacency_matrix(perm)
         score = np.sum(predicted_adj_matrix == target_adj_matrix)
         best_score = max(best_score, score)
