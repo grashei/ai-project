@@ -6,7 +6,7 @@ Our predictor consists of two parts:
 - The model _KantenKennerKarl_ (Karl) predicts the neighbor edges for each node
 - The graph-building algorithm _GraphGuruGünter_ (Günter) builds the spanning tree based on Karl's predictions
 
-We built two variants of Karl and Günter, one that works with the nodes' FamilyIDs and one with their PartIDs. Supprisingly the performed almost the same. In the illustration, the node's ID refers to its Family ID or part ID, depending on the variations of Karl and Günter.
+We built two variants of Karl and Günter, one that works with the nodes' FamilyIDs and one with their PartIDs. Surprisingly they performed almost the same. In the illustration, the node's ID refers to its Family ID or part ID, depending on the variations of Karl and Günter.
 
 ## Pros and Cons of Karl & Günter
 ### Their Advantages 
