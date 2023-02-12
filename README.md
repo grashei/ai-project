@@ -1,3 +1,7 @@
+# Project Structure
+Most of our code and documentation, including our decision process, can be found in the `neighbour_prediction_ffn.ipynb` Jupiter Notebook. To evaluate our predictor, please run the Jupitery Notebook file. It only trains our models if the model hasn’t been persisted yet. Since we added the persisted model to our repository, it will automatically skip training.
+Note: We slightly modified `evaluation.py` to include the normalized edge accuracy and by stopping calculating the edge accuracy if the method has to check against at least 10k permutations (the permutation limit is a function parameter, and it can only worsen the edge accuracy).
+
 # Our Approach
 ![PreidctorDescription](https://user-images.githubusercontent.com/9284845/218280501-d55bd0ad-004d-4a64-8b04-c9350ea43842.jpg)
 
