@@ -11,20 +11,11 @@ from tqdm import tqdm
 from graph import Graph
 from part import Part
 from stats import print_data_stats
-
-
-class MyPredictionModel(ABC):
-    """
-    This class is a blueprint for your prediction model(s) serving as base class.
-    """
-
-    @abstractmethod
-    def predict_graph(self, parts: Set[Part]) -> Graph:
-        """
-        Returns a graph containing all given parts. This method is called within the method `evaluate`.
-        :param parts: set of parts to form up a construction (i.e. graph)
-        :return: graph
-        """
+from predictors import GraphenGuruGuenterFamId, GraphenGuruGuenterPartId
+import time
+import torch
+from predictors import MyPredictionModel
+from model import Net
 
 
 def load_model(file_path: str) -> MyPredictionModel:
@@ -205,10 +196,12 @@ if __name__ == '__main__':
     with open('data/graphs.dat', 'rb') as file:
         train_graphs: List[Graph] = pickle.load(file)
 
-    print_data_stats(train_graphs)
     model_file_path = 'data/karl.dat'
     prediction_model: MyPredictionModel = load_model(model_file_path)
 
     # For illustration, compute eval score on train data
-    instances = [(graph.get_parts(), graph) for graph in train_graphs[:100]]
+    instances = [(graph.get_parts(), graph) for graph in train_graphs]
     eval_score = evaluate(prediction_model, instances)
+    print(f"Mean edge accuracy: {eval_score}")
+
+#%%
