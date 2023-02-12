@@ -15,7 +15,7 @@ We built two variants of Karl and Günter, one that works with the nodes' Family
 ## Pros and Cons of Karl & Günter
 ### Their Advantages 
 - They can handle node sets/graphs of all sizes
-- Short training duration (less than five minutes on budget graphic cards), which allows for rapid hyperparameter tweaking and testing algorithmic changes 
+- Short training duration (the family ID variant takes less than one minutes on a mid-tier graphic card), which allows for rapid hyperparameter tweaking and testing algorithmic changes 
 - Always outputs a connected non-cyclomatic graph
 - They are tuned with our "normalized accuracy" to also perform well on larger graphs
 ### Their Weaknesses
