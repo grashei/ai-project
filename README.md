@@ -6,7 +6,7 @@ Our predictor consists of two parts:
 - The model _KantenKennerKarl_ (Karl) predicts the neighbor edges for each node
 - The graph-building algorithm _GraphGuruGünter_ (Günter) builds the spanning tree based on Karl's predictions
 
-We built two variants of Karl and Günter, one that works with the nodes' FamilyIDs and one with their PartIDs. Surprisingly they performed almost the same. In the illustration, the node's ID refers to its Family ID or part ID, depending on the variations of Karl and Günter.
+We built two variants of Karl and Günter, one that works with the nodes' FamilyIDs and one with their PartIDs. Surprisingly they performed almost the same. In the illustration and readme file, ID refers to the node's Family ID or part ID, depending on the variations of Karl and Günter.
 
 ## Pros and Cons of Karl & Günter
 ### Their Advantages 
@@ -20,6 +20,15 @@ We built two variants of Karl and Günter, one that works with the nodes' Family
 
 # Our Accuracy
 Large graphs are the most tricky ones to predict. To our advantage, the edge accuracy only lightly punishes mispredicted large graphs. We receive a high edge accuracy by default for large spanning trees, regardless of whether the graph represents the original graph (e.g., 81% edge accuracy for a graph containing 20 nodes even though all of the prediction's #node-1 edges are not present in the original graph). A random spanning tree predictor gets 66% accuracy on the dataset on average. We counterbalance with normalizing the edge accuracy: a normalized edge accuracy of 0% indicates the edge accuracy couldn't be worse (assuming that both the predicted and actual graphs are spanning trees), and 100% means the edge accuracy couldn't be better. We optimized our predictor against the normalized edge accuracy which strongly correlates with the default edge accuracy.
+
+# Experiments
+These tweaks all didn’t make it in our final model and algorithm as they performed worse with them:
+## Single-Edge Prediction
+Our original idea was that instead of predicting all neighbors for one node, only predict if there's an edge between two nodes. We dropped the idea because the number of needed edge predictions scales quadratically with graph size while the number of required neighbor predictions scales linearly. We'd need much more edge predictions for large graphs than neighbor predictions, which likely hurts the overall quality of the predicted spanning tree.
+## Predict the Number of Neighbours With the Same IDs
+Karl only predicts the IDs of a node's neighbors, not if it has multiple neighbors with the same ID and how many. Since Karl's task changed from a classification problem to a classification and regression problem, we removed the sigmoid at the last layer and replaced the BCE Loss with the MSE Loss. The changes resulted in a decrease in both Karl's and Günter's accuracies.
+## Tree-Based Approach
+Most graphs seem to have a root from which other parts extend symmetrically; it resembles the construction's base. For example, only one node usually has multiple neighbors with the same part ID, and often, this node also has the highest degree. We wanted to see if treating the root node differently and building the output graph around the root node positively affects our accuracy. We looked at the output graph as a tree and defined the root as the node with the highest degree in the center set (choose one at random if multiple have the same degree) and the center set as the set of all vertices of minimum eccentricity. We now built a second fully-connected feed-forward network to predict the graph's root node. It had a similar validation accuracy as Karl (> 99.9%). Then we changed Karl to only predict the children's neighbors instead of all neighbors. Also, we added one dimension to the feature vector that tells Karl if the node for which Karl should predict its neighbors is a root node. Günter now takes these predictions and begins building the graph, starting at the (predicted) root node. We allowed Günter to only connect several parts with the same part id to the root node. We achieved a validation edge accuracy of slightly below 98% with that approach which is lower than the one achieved with our simpler variants of Karl and Günter a few days after. This approach might have been too overengineered; we possibly tried too hard searching for patterns.
 
 ---
 # ai-lecture-project
