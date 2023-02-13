@@ -1,7 +1,13 @@
 # Project Structure
+
+## How to Run The Project
 Most of our code and documentation, including explanations of our decisions, can be found in the `neighbour_prediction_ffn.ipynb` Jupiter Notebook. To evaluate our predictor, please run the Jupitery Notebook file. It only trains our models if the model hasn’t been persisted yet. Since we added the persisted model to our repository, it will automatically skip training.
 
+## Evaluation Class
 Note: We slightly modified `evaluation.py` to include the normalized edge accuracy (see the functions `normalized_evaluate_graphs` and `normalized_relative_edge_accuracy`) and by stopping calculating the edge accuracy if the method has to check against at least 10k permutations (the permutation limit is a function parameter, and it can only worsen the edge accuracy).
+
+## Individually testing models without the predictor
+Since the persisted proper part ID model file size exceeds GitHub's limit, you need to [download it externally](https://megastore.rz.uni-augsburg.de/get/fHLk8TRsoI/) and replace the dummy file `data/karl_part.dat`. However, you don't need to download this file to run our predictor (because our predictor uses the family ID variant), you'd only need it if you want to test the part ID variant of Karl without testing our whole predictor.
 
 # Our Approach
 ![PreidctorDescription](https://user-images.githubusercontent.com/9284845/218280501-d55bd0ad-004d-4a64-8b04-c9350ea43842.jpg)
