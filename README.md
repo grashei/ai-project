@@ -29,7 +29,7 @@ We built two variants of Karl and Günter, one that works with the nodes' Family
 Large graphs are the most tricky ones to predict. To our advantage, the edge accuracy only lightly punishes mispredicted large graphs. We receive a high edge accuracy by default for large spanning trees, regardless of whether the graph represents the original graph (e.g., 81% edge accuracy for a graph containing 20 nodes even though all of the prediction's #node-1 edges are not present in the original graph). A random spanning tree predictor gets 66% accuracy on the dataset on average. We counterbalance with normalizing the edge accuracy: a normalized edge accuracy of 0% indicates the edge accuracy couldn't be worse (assuming that both the predicted and actual graphs are spanning trees), and 100% means the edge accuracy couldn't be better. We optimized our predictor against the normalized edge accuracy which strongly correlates with the default edge accuracy.
 
 ## Results
-Our best model has an accuracy (against our test set) of 98.8% and normalized accuracy of 97.6%.
+Our best model has an accuracy (against our test set) of 98.9% and normalized accuracy of 97.8%.
 
 # Experiments
 These tweaks all didn’t make it in our final model and algorithm as they performed worse with them:
